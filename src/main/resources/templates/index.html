@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>xixixi</title>
+  <style>
+    .field-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .field {
+      margin-bottom: 10px;
+    }
+    .field-label {
+      font-weight: bold;
+    }
+    .red-bold {
+      color: red;
+      font-size: 18px;
+    }
+    .large-textarea {
+      font-size: 14px; /* 保持字体大小不变 */
+      width: 61.8%;
+      height: 150px; /* 调整高度以适应多行 */
+      resize: vertical; /* 允许用户垂直调整大小 */
+      padding: 6px 12px; /* 调整内边距 */
+    }
+  </style>
+</head>
+<body>
+<h1>xixixi</h1>
+<div class="field-group">
+  <label for="requestInput">请输入建表sql:</label>
+  <textarea id="requestInput" class="large-textarea" placeholder="请输入请求字符串"></textarea>
+</div>
+<button onclick="displayData()">获取数据</button>
+<div id="data-display"></div>
+
+<script>
+  function displayData() {
+    const reqStr = document.getElementById('requestInput').value;
+    if (!reqStr) {
+      alert('请先输入请求字符串');
+      return;
+    }
+
+    fetch('/code', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: reqStr
+    })
+      .then(response => response.json())
+      .then(data => {
+        displayObject(data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+
+  function displayObject(obj) {
+    const displayArea = document.getElementById('data-display');
+    displayArea.innerHTML = '';
+    Object.keys(obj).forEach(key => {
+      const field = document.createElement('div');
+      field.className = 'field';
+
+      const label = document.createElement('span');
+      label.className = 'field-label red-bold';
+      label.textContent = key + ':';
+
+      const br = document.createElement('br'); // 创建换行元素
+
+      let value;
+try {
+        value = obj[key].replace(/\r?\n/g, '<br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\s/g, '&nbsp;');
+      } catch (error) {
+        value = obj[key];
+      }
+
+      const valueElement = document.createElement('span');
+      valueElement.innerHTML = value;
+
+      field.appendChild(label);
+      field.appendChild(br); // 添加换行元素
+      field.appendChild(valueElement);
+      displayArea.appendChild(field);
+    });
+  }
+</script>
+</body>
+</html>
