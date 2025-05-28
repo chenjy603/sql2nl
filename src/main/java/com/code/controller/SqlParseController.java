@@ -1,6 +1,7 @@
 package com.code.controller;
 
 import com.code.model.CodeVo;
+import com.code.model.Dto;
 import com.code.service.impl.SqlParseServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -18,8 +19,9 @@ public class SqlParseController {
     @Autowired
     SqlParseServiceImpl sqlParseService;
     @PostMapping(value = "/code")
-    public CodeVo chat(@RequestBody String reqStr) throws Exception {
-        log.info("接口请求参数：\n{}",reqStr);
-        return sqlParseService.parseCreateSql(reqStr);
+    public CodeVo chat(@RequestBody Dto dto) throws Exception {
+        log.info("接口请求参数：\n{}",dto);
+        String sql = dto.getSql();
+        return sqlParseService.parseCreateSql(sql);
     }
 }
